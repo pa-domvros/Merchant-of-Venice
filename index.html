@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shylock and Implicit Bias: A Lesson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Body and Main Container Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Top Header */
+        .top-header {
+            font-family: 'Inter', sans-serif;
+            font-size: 1 rem;
+            color: #444;
+            padding: 0.5rem;
+        }
+        
+        /* Title and Subtitle Styles from index.html */
+        .title-container {
+            text-align: center;
+        }
+        .title-container h1 {
+            font-family: 'Great Vibes', cursive;
+            font-weight: normal;
+            font-size: 3.5em;
+            margin: 0;
+            color: #800020;
+        }
+        .title-container h2 {
+            font-family: 'Great Vibes', cursive;
+            font-weight: normal;
+            font-size: 2.5em;
+            color: #800020;
+            margin: 0.5rem 0;
+        }
+        .title-container .subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.2em;
+            margin: 0;
+            color: #444;
+            line-height: 1.4;
+        }
+        
+        /* Video Container Styles from index.html */
+        .video-container-shylock {
+            width: 90%;
+            max-width: 800px;
+            margin: 1rem auto;
+            border: 10px solid #800020;
+            box-sizing: border-box;
+        }
+        .video-container-bias {
+            width: 90%;
+            max-width: 800px;
+            margin: 1rem auto;
+        }
+        video {
+            width: 100%;
+        }
+
+        /* Subtitle Container Styles */
+        #shylock-subtitles,
+        #bias-subtitles {
+            margin: 1rem auto;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 0.5rem;
+            border-radius: 8px;
+            box-shadow: none;
+            min-height: 5em;
+        }
+        .original-text, .translation-text, .bias-text {
+            margin: 0.25rem 0;
+        }
+        .original-text {
+            font-style: italic;
+            font-size: 1.1em;
+        }
+        .translation-text, .bias-text {
+            font-size: 1em;
+            line-height: 1.4;
+        }
+        .bias-text-container {
+            text-align: center;
+        }
+
+        /* Interactive Activity Styles */
+        .activity-container {
+            background-color: #fdfaf6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .draggable-concept, .draggable-term {
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.9rem;
+        }
+        .draggable-concept.dragging, .draggable-term.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        .drop-zone {
+            min-height: 3.5rem;
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.2s ease-in-out;
+            padding: 0.5rem;
+        }
+        .drop-zone.dragover {
+            background-color: #e0e7ff;
+            border-color: #4f46e5;
+        }
+        .drop-zone.correct {
+            background-color: #d1fae5;
+            border-color: #10b981;
+        }
+        .drop-zone.incorrect {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+        }
+        
+        /* Collective Worksheet Styles */
+        .hint-button {
+            transition: all 0.2s ease-in-out;
+            color: #a5712e;
+        }
+        .hint-button:hover {
+            transform: scale(1.05);
+            color: #c0944b;
+        }
+        .hint-text {
+            display: none;
+            transition: all 0.3s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+            background-color: #fff9e6;
+            border-left: 4px solid #c0944b;
+            padding: 0 1rem;
+        }
+        .hint-text.open {
+            display: block;
+            max-height: 200px;
+            padding: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .transcript-content {
+            display: none;
+            text-align: justify;
+        }
+        .transcript-content.active {
+            display: block;
+        }
+        .transcript-buttons button {
+            background-color: #a5712e;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .transcript-buttons button:hover {
+            background-color: #c0944b;
+        }
+
+        /* Feedback Form Styles */
+        .star-rating {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #e5e7eb;
+            transition: color 0.2s;
+        }
+        .star-rating.filled {
+            color: #f59e0b;
+        }
+        .feedback-button {
+            background-color: #a5712e;
+            color: white;
+            font-weight: 600;
+        }
+        .feedback-button:hover {
+            background-color: #c0944b;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="top-header">
+     <p class="font-bold italic text-center text-[#c0944b]">The following lesson has been created by Panagiotis Domvros, English and Drama Teacher © 2025 </p>
+    </div>
+
+    <div class="main-container">
+        
+        <!-- Part 1: The Hook (Shylock's Speech) -->
+        <div class="title-container">
+            <h1>Shylock's Monologue</h1>
+            <p class="subtitle">From William Shakespeare's play <em>The Merchant of Venice</em> (Act 3, Scene 1)</p>
+            <p class="subtitle">Performed by Adrian Schiller in 2022 at Shakespeare's Globe</p>
+            <p class="subtitle">Modern English translation, Panagiotis Domvros, English and Drama Teacher</p>
+        </div>
+    
+        <div class="video-container-shylock">
+            <video id="shylock-video" controls>
+                <source src="Merchant.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    
+        <div id="shylock-subtitles">
+            <p class="original-text text-lg"></p>
+            <p class="translation-text text-base"></p>
+        </div>
+        
+        <div id="shylock-activities-container" class="activity-container">
+            <header class="text-center space-y-1">
+                <h2 class="font-bold text-gray-900 text-2xl">Shylock's Speech: An Interactive Analysis</h2>
+                <p class="text-base text-gray-600">Work in your groups to complete these two activities after watching the video. Drag the feelings to the correct lines, then tick the lines that show prejudice.</p>
+            </header>
+
+            <div id="tone-activity" class="space-y-3 mt-3">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Activity 1: Tone and Feeling Match</h3>
+                
+                <div class="flex flex-col lg:flex-row gap-2">
+                    <div class="lg:w-1/3 p-2 rounded-lg shadow-inner bg-gray-100">
+                        <h4 class="text-base font-medium mb-1 text-gray-700">Feelings</h4>
+                        <div id="feelings-list" class="space-y-1">
+                            <div id="anger" class="draggable-concept p-2 bg-red-500 text-white font-bold rounded-md shadow-md" draggable="true">Anger</div>
+                            <div id="sorrow" class="draggable-concept p-2 bg-blue-500 text-white font-bold rounded-md shadow-md" draggable="true">Sorrow</div>
+                            <div id="logic" class="draggable-concept p-2 bg-green-500 text-white font-bold rounded-md shadow-md" draggable="true">Logical Argument</div>
+                            <div id="defiance" class="draggable-concept p-2 bg-purple-500 text-white font-bold rounded-md shadow-md" draggable="true">Defiance</div>
+                        </div>
+                    </div>
+                    <div class="lg:w-2/3 p-2 rounded-lg shadow-inner bg-gray-100">
+                        <h4 class="text-base font-medium mb-1 text-gray-700">Speech Lines</h4>
+                        <div id="lines-list" class="space-y-2">
+                            <div class="line-container p-2 bg-white rounded-md shadow-sm border border-gray-200">
+                                <p class="line-text text-gray-700 font-medium text-sm">"Hath not a Jew eyes? Hath not a Jew hands, organs, dimensions, senses, affections, passions?"</p>
+                                <p class="text-xs text-gray-500 italic mt-1">Modern English: Does a Jew not have eyes? Do they not have hands, organs, senses, and emotions?</p>
+                                <div class="drop-zone empty mt-1 h-8 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-xs text-gray-400">Drag a feeling here</div>
+                                <span class="feedback text-xs mt-1 font-semibold"></span>
+                            </div>
+                            <div class="line-container p-2 bg-white rounded-md shadow-sm border border-gray-200">
+                                <p class="line-text text-gray-700 font-medium text-sm">"Fed with the same food, hurt with the same weapons, subject to the same diseases..."</p>
+                                <p class="text-xs text-gray-500 italic mt-1">Modern English: Fed with the same food, hurt with the same weapons, subject to the same diseases...</p>
+                                <div class="drop-zone empty mt-1 h-8 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-xs text-gray-400">Drag a feeling here</div>
+                                <span class="feedback text-xs mt-1 font-semibold"></span>
+                            </div>
+                            <div class="line-container p-2 bg-white rounded-md shadow-sm border border-gray-200">
+                                <p class="line-text text-gray-700 font-medium text-sm">"If you poison us, do we not die? And if you wrong us, shall we not revenge?"</p>
+                                <p class="text-xs text-gray-500 italic mt-1">Modern English: If you poison us, do we not die? And if you wrong us, will we not take revenge?</p>
+                                <div class="drop-zone empty mt-1 h-8 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-xs text-gray-400">Drag a feeling here</div>
+                                <span class="feedback text-xs mt-1 font-semibold"></span>
+                            </div>
+                            <div class="line-container p-2 bg-white rounded-md shadow-sm border border-gray-200">
+                                <p class="line-text text-gray-700 font-medium text-sm">"If we are like you in the rest, we shall resemble you in that. The villainy you teach me, I will execute."</p>
+                                <p class="text-xs text-gray-500 italic mt-1">Modern English: If we are like you in everything else, we will be like you in that, too. The evil you have taught me, I will do, and I will do it even better.</p>
+                                <div class="drop-zone empty mt-1 h-8 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-xs text-gray-400">Drag a feeling here</div>
+                                <span class="feedback text-xs mt-1 font-semibold"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="reset-tone" class="mt-2 w-full lg:w-1/3 bg-gray-500 text-white font-bold p-2 rounded-md shadow-lg hover:bg-gray-600 transition-colors duration-200 text-sm">Reset Activity 1</button>
+            </div>
+    
+            <div id="prejudice-activity" class="space-y-3 mt-3">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Activity 2: Lines on Prejudice</h3>
+                <div id="prejudice-lines-list" class="space-y-2">
+                    <div class="flex items-center space-x-3 p-2 rounded-md shadow-sm bg-gray-100">
+                        <input type="checkbox" id="prejudice-line1" data-correct="false" class="form-checkbox h-4 w-4 text-indigo-600 rounded-md cursor-pointer">
+                        <label for="prejudice-line1" class="text-gray-700 font-medium text-sm">"Hath not a Jew eyes? Hath not a Jew hands?"</label>
+                        <p class="text-xs text-gray-500 italic ml-auto hidden md:block">Modern English: Does a Jew not have eyes? Do they not have hands?</p>
+                    </div>
+                    <div class="flex items-center space-x-3 p-2 rounded-md shadow-sm bg-gray-100">
+                        <input type="checkbox" id="prejudice-line2" data-correct="false" class="form-checkbox h-4 w-4 text-indigo-600 rounded-md cursor-pointer">
+                        <label for="prejudice-line2" class="text-gray-700 font-medium text-sm">"Fed with the same food, hurt with the same weapons..."</label>
+                        <p class="text-xs text-gray-500 italic ml-auto hidden md:block">Modern English: Fed with the same food, hurt with the same weapons...</p>
+                    </div>
+                    <div class="flex items-center space-x-3 p-2 rounded-md shadow-sm bg-gray-100">
+                        <input type="checkbox" id="prejudice-line3" data-correct="false" class="form-checkbox h-4 w-4 text-indigo-600 rounded-md cursor-pointer">
+                        <label for="prejudice-line3" class="text-gray-700 font-medium text-sm">"And if you wrong us, shall we not revenge?"</label>
+                        <p class="text-xs text-gray-500 italic ml-auto hidden md:block">Modern English: And if you wrong us, will we not take revenge?</p>
+                    </div>
+                    <div class="flex items-center space-x-3 p-2 rounded-md shadow-sm bg-gray-100">
+                        <input type="checkbox" id="prejudice-line4" data-correct="true" class="form-checkbox h-4 w-4 text-indigo-600 rounded-md cursor-pointer">
+                        <label for="prejudice-line4" class="text-gray-700 font-medium text-sm">"If a Jew wrong a Christian, what's his humility? Revenge. If a Christian wrong a Jew, what should his sufferance be by Christian example? Why, revenge."</label>
+                        <p class="text-xs text-gray-500 italic ml-auto hidden md:block">Modern English: If a Jew wrongs a Christian, what is the Christian's response? Revenge. If a Christian wrongs a Jew, what should the Jew's response be by the Christian's example? Why, revenge.</p>
+                    </div>
+                    <div class="flex items-center space-x-3 p-2 rounded-md shadow-sm bg-gray-100">
+                        <input type="checkbox" id="prejudice-line5" data-correct="true" class="form-checkbox h-4 w-4 text-indigo-600 rounded-md cursor-pointer">
+                        <label for="prejudice-line5" class="text-gray-700 font-medium text-sm">"The villainy you teach me, I will execute, and it shall go hard but I will better the instruction."</label>
+                        <p class="text-xs text-gray-500 italic ml-auto hidden md:block">Modern English: The evil you have taught me, I will do, and I will do it even better.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-2 mt-2">
+                    <button id="check-prejudice" class="w-full lg:w-1/3 bg-indigo-600 text-white font-bold p-2 rounded-md shadow-lg hover:bg-indigo-700 transition-colors duration-200 text-sm">Check Answers</button>
+                    <button id="reset-prejudice" class="w-full lg:w-1/3 bg-gray-500 text-white font-bold p-2 rounded-md shadow-lg hover:bg-gray-600 transition-colors duration-200 text-sm">Reset Activity 2</button>
+                </div>
+                <div id="prejudice-results" class="mt-2 p-2 text-center text-base font-semibold rounded-md hidden"></div>
+            </div>
+        </div>
+
+        <!-- Part 2: Modern Connection -->
+        <div class="title-container mt-4">
+            <h2 class="font-bold text-2xl text-gray-900">The Modern Connection</h2>
+            <p class="subtitle font-normal">
+                Tiffany Taylor Smith is the executive director for inclusive excellence education and professional development at the University of Dayton. This video is part of the University of Dayton Anti-Racist Lecture Series. More at <a href="https://www.udayton.edu/about/diversity/" target="_blank" class="text-indigo-600 underline">https://www.udayton.edu/about/diversity/</a>
+            </p>
+        </div>
+
+        <div class="video-container-bias">
+            <video id="bias-video" controls>
+                <source src="What is Implicit Bias.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div id="bias-subtitles">
+            <p class="bias-text text-base"></p>
+        </div>
+
+        <div id="bias-concept-activity" class="activity-container">
+            <header class="text-center space-y-1">
+                <h3 class="text-xl font-bold text-gray-900">Understanding Implicit Bias: Key Concepts</h3>
+                <p class="text-base text-gray-600">Drag the key concepts to their correct descriptions to check your understanding of the video.</p>
+            </header>
+            <div class="bg-gray-100 p-2 rounded-lg shadow-xl mt-2">
+                <h4 class="text-base font-semibold mb-1 text-gray-800">Key Concepts</h4>
+                <div id="terms-list" class="flex flex-wrap gap-1 justify-center">
+                    <div id="implicit-bias" class="draggable-term p-2 bg-yellow-400 text-black font-bold rounded-md shadow-md" draggable="true">Implicit Bias</div>
+                    <div id="amygdala" class="draggable-term p-2 bg-orange-400 text-white font-bold rounded-md shadow-md" draggable="true">Amygdala</div>
+                    <div id="stereotypes" class="draggable-term p-2 bg-purple-400 text-white font-bold rounded-md shadow-md" draggable="true">Stereotypes</div>
+                    <div id="unconscious" class="draggable-term p-2 bg-lime-400 text-black font-bold rounded-md shadow-md" draggable="true">Unconscious</div>
+                    <div id="life-experiences" class="draggable-term p-2 bg-red-400 text-white font-bold rounded-md shadow-md" draggable="true">Life Experiences</div>
+                    <div id="judgements-and-perceptions" class="draggable-term p-2 bg-teal-400 text-white font-bold rounded-md shadow-md" draggable="true">Judgements and Perceptions</div>
+                </div>
+            </div>
+    
+            <div class="bg-gray-100 p-2 rounded-lg shadow-xl mt-2">
+                <h4 class="text-base font-semibold mb-1 text-gray-800">Definitions from the Video</h4>
+                <div class="space-y-2">
+                    <div class="flex flex-col lg:flex-row items-center gap-1 p-2 bg-white rounded-md shadow-sm">
+                        <p class="lg:w-1/2 flex-shrink-0 font-medium text-gray-700 text-sm">A small part of the brain whose purpose is to protect us from danger and reacts quickly to assess how safe we are.</p>
+                        <div id="drop-zone-1" class="drop-zone flex-grow" data-correct-id="amygdala">
+                            <span class="text-sm text-gray-400">Drop term here</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col lg:flex-row items-center gap-1 p-2 bg-white rounded-md shadow-sm">
+                        <p class="lg:w-1/2 flex-shrink-0 font-medium text-gray-700 text-sm">Biases that are not at the forefront of our thoughts.</p>
+                        <div id="drop-zone-2" class="drop-zone flex-grow" data-correct-id="unconscious">
+                            <span class="text-sm text-gray-400">Drop term here</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col lg:flex-row items-center gap-1 p-2 bg-white rounded-md shadow-sm">
+                        <p class="lg:w-1/2 flex-shrink-0 font-medium text-gray-700 text-sm">Categories our brain places people in based on outward appearances, which are not always accurate.</p>
+                        <div id="drop-zone-3" class="drop-zone flex-grow" data-correct-id="stereotypes">
+                            <span class="text-sm text-gray-400">Drop term here</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col lg:flex-row items-center gap-1 p-2 bg-white rounded-md shadow-sm">
+                        <p class="lg:w-1/2 flex-shrink-0 font-medium text-gray-700 text-sm">Unconscious biases that are influenced by the messages we are given and the things we experience.</p>
+                        <div id="drop-zone-4" class="drop-zone flex-grow" data-correct-id="implicit-bias">
+                            <span class="text-sm text-gray-400">Drop term here</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col lg:flex-row items-center gap-1 p-2 bg-white rounded-md shadow-sm">
+                        <p class="lg:w-1/2 flex-shrink-0 font-medium text-gray-700 text-sm">One of the main influences on our unconscious biases.</p>
+                        <div id="drop-zone-5" class="drop-zone flex-grow" data-correct-id="life-experiences">
+                            <span class="text-sm text-gray-400">Drop term here</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col lg:flex-row items-center gap-1 p-2 bg-white rounded-md shadow-sm">
+                        <p class="lg:w-1/2 flex-shrink-0 font-medium text-gray-700 text-sm">The things we should try to pay attention to in order to overcome our biases.</p>
+                        <div id="drop-zone-6" class="drop-zone flex-grow" data-correct-id="judgements-and-perceptions">
+                            <span class="text-sm text-gray-400">Drop term here</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-2 mt-2">
+                    <button id="check-answers-bias" class="w-full lg:w-1/3 bg-indigo-600 text-white font-bold p-2 rounded-md shadow-lg hover:bg-indigo-700 transition-colors duration-200 text-sm">Check Answers</button>
+                    <button id="reset-activity-bias" class="w-full lg:w-1/3 bg-gray-500 text-white font-bold p-2 rounded-md shadow-lg hover:bg-gray-600 transition-colors duration-200 text-sm">Reset Activity</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 3: Group Work -->
+        <div class="title-container mt-4">
+            <h2 class="text-2xl font-bold text-gray-900">Group Work Session</h2>
+            <p class="subtitle font-normal">This worksheet is for the entire class. Each group will work on their assigned section.</p>
+        </div>
+
+        <div class="transcript-buttons flex flex-col md:flex-row justify-center items-center gap-2">
+            <button id="show-shylock-transcript" class="py-2 px-4 rounded-md shadow-lg font-bold transition-colors duration-200 text-sm">
+                Show Shylock's Transcript
+            </button>
+            <button id="show-bias-transcript" class="py-2 px-4 rounded-md shadow-lg font-bold transition-colors duration-200 text-sm">
+                Show Implicit Bias Transcript
+            </button>
+        </div>
+
+        <div id="shylock-transcript" class="transcript-content activity-container">
+            <h3 class="text-xl font-bold mb-2 text-gray-800">Shylock's Speech</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-justify">
+                <div><p class="font-medium text-sm">Hath not a Jew eyes?</p></div>
+                <div><p class="italic text-xs text-gray-500">Does a Jew not have eyes?</p></div>
+                <div><p class="font-medium text-sm">Hath not a Jew hands, organs, dimensions, senses, affections, passions?</p></div>
+                <div><p class="italic text-xs text-gray-500">Do they not have hands, organs, senses, and emotions?</p></div>
+                <div><p class="font-medium text-sm">Fed with the same food, hurt with the same weapons, subject to the same diseases, healed by the same means, warmed and cooled by the same winter and summer as a Christian is?</p></div>
+                <div><p class="italic text-xs text-gray-500">Fed with the same food, hurt with the same weapons, subject to the same diseases, healed by the same means, warmed and cooled by the same winter and summer as a Christian is?</p></div>
+                <div><p class="font-medium text-sm">If you prick us, do we not bleed?</p></div>
+                <div><p class="italic text-xs text-gray-500">If you prick us, do we not bleed?</p></div>
+                <div><p class="font-medium text-sm">If you tickle us, do we not laugh?</p></div>
+                <div><p class="italic text-xs text-gray-500">If you tickle us, do we not laugh?</p></div>
+                <div><p class="font-medium text-sm">If you poison us, do we not die?</p></div>
+                <div><p class="italic text-xs text-gray-500">If you poison us, do we not die?</p></div>
+                <div><p class="font-medium text-sm">And if you wrong us, shall we not revenge?</p></div>
+                <div><p class="italic text-xs text-gray-500">And if you wrong us, will we not take revenge?</p></div>
+                <div><p class="font-medium text-sm">If we are like you in the rest, we shall resemble you in that.</p></div>
+                <div><p class="italic text-xs text-gray-500">If we are like you in everything else, we will be like you in that, too.</p></div>
+                <div><p class="font-medium text-sm">If a Jew wrong a Christian, what's his humility? Revenge.</p></div>
+                <div><p class="italic text-xs text-gray-500">If a Jew wrongs a Christian, what is the Christian's response? Revenge.</p></div>
+                <div><p class="font-medium text-sm">If a Christian wrong a Jew, what should his sufferance be by Christian example? Why, revenge.</p></div>
+                <div><p class="italic text-xs text-gray-500">If a Christian wrongs a Jew, what should the Jew's response be by the Christian's example? Why, revenge.</p></div>
+                <div><p class="font-medium text-sm">The villainy you teach me I will execute and it shall go hard but I will better the instruction.</p></div>
+                <div><p class="italic text-xs text-gray-500">The evil you have taught me, I will do, and I will do it even better.</p></div>
+            </div>
+        </div>
+
+        <div id="bias-transcript" class="transcript-content activity-container">
+            <h3 class="text-xl font-bold mb-2 text-gray-800">Implicit Bias Transcript</h3>
+            <p class="mb-2 text-sm">We all have implicit bias. These unconscious biases that we carry are influenced by our life experiences and the messages we are given, either intentionally or unintentionally about ourselves and others. These messages are unconscious because they are not at the forefront of our thoughts.</p>
+            <p class="mb-2 text-sm">They're stored in the amygdala, a small portion of the brain with the primary purpose of protecting us from danger. Our brain places people into categories based on outward appearances, and those stereotypes allow our amygdala to quickly size up our situation. We're using stored information from life experiences, but those stereotypes are not always accurate.</p>
+            <p class="mb-2 text-sm">This is not limited to dangerous situations. At work, we might react to people differently without even thinking about how our stereotypes might be influencing our actions.</p>
+            <p class="text-sm">To overcome these biases and limit their impact, we should try to pay attention to the judgments and perceptions we have about people. We can add new information to our brain's memory by interacting with different groups of people, be open to sharing, and be patient with ourself and others. By making an effort to notice when our biases influence our unconscious judgments of others, we can strive to minimize the impact our biases have on our beliefs and actions.</p>
+        </div>
+        
+        <div class="activity-container">
+            <h3 class="text-xl font-bold mb-2 text-gray-800">Group 1 & 2: Text User - The Purpose of the Speeches</h3>
+            <div class="space-y-2">
+                <div>
+                    <h4 class="font-semibold text-sm">1. What is the main goal of Shylock's speech? Is he trying to persuade the Christians, provoke them, or simply express his pain and humanity?</h4>
+                    <button class="hint-button text-xs mt-1 hover:underline">Show Hint</button>
+                    <p class="hint-text text-xs mt-1">Hint: Consider the final lines of the speech where he talks about revenge. Does this sound more like a plea for understanding or a declaration of intent?</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm">2. What is the main goal of the speaker in the "Implicit Bias" video? What is he trying to persuade the audience to do?</h4>
+                    <button class="hint-button text-xs mt-1 hover:underline">Show Hint</button>
+                    <p class="hint-text text-xs mt-1">Hint: The video's conclusion offers a clear call to action. What does the speaker ask people to pay attention to?</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm">3. What is similar about the purpose of the two speeches, despite their different contexts?</h4>
+                    <button class="hint-button text-xs mt-1 hover:underline">Show Hint</button>
+                    <p class="hint-text text-xs mt-1">Hint: Think about what both Shylock and the speaker in the video are ultimately trying to change about human behavior.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="activity-container">
+            <h3 class="text-xl font-bold mb-2 text-gray-800">Group 3 & 4: Text Analyst - Timeless Racism</h3>
+            <div class="space-y-2">
+                <div>
+                    <h4 class="font-semibold text-sm">1. How is Shylock's experience with prejudice similar to what the modern video describes?</h4>
+                    <button class="hint-button text-xs mt-1 hover:underline">Show Hint</button>
+                    <p class="hint-text text-xs mt-1">Hint: Focus on the video's explanation of "outward appearances" and "stereotypes." How are these ideas present in the way the Christians treat Shylock?</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm">2. What is the main difference between how racism is shown in the two pieces?</h4>
+                    <button class="hint-button text-xs mt-1 hover:underline">Show Hint</button>
+                    <p class="hint-text text-xs mt-1">Hint: Consider the tone and style of each piece. One is a personal, emotional story, while the other is an objective, scientific explanation.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="activity-container">
+            <h3 class="text-xl font-bold mb-2 text-gray-800">Group 5: Language Focus - Function on Structure</h3>
+            <div class="space-y-2">
+                <div>
+                    <h4 class="font-semibold text-sm">1. Find the rhetorical questions in the speech and explain their purpose.</h4>
+                    <button class="hint-button text-xs mt-1 hover:underline">Show Hint</button>
+                    <p class="hint-text text-xs mt-1">Hint: Think about the questions Shylock asks ("If you prick us, do we not bleed?"). Is he looking for an answer, or is he making a point?</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-sm">2. Identify the parallel structures and explain how they make his argument more powerful.</h4>
+                    <button class="hint-button text-xs mt-1 hover:underline">Show Hint</button>
+                    <p class="hint-text text-xs mt-1">Hint: Look for repeated phrases or sentence patterns. How does this repetition build a sense of rhythm and emotional intensity?</p>
+                </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Part 4: Final Wrap-Up and Feedback -->
+        <div class="activity-container" id="feedback-form-section">
+            <h3 class="text-xl font-bold mb-2 text-gray-800">Final Feedback</h3>
+            <p class="text-gray-700 text-sm">As a final task, please fill out the feedback form below. Your input helps improve the lesson!</p>
+            
+            <form id="feedback-form" action="https://formspree.io/f/myzpbonq" method="POST" class="space-y-4 mt-2">
+                <div>
+                    <label for="student-name" class="block text-sm font-medium text-gray-700">Your Name</label>
+                    <input type="text" id="student-name" name="student_name" placeholder="Enter your name" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm">
+                </div>
+
+                <div class="space-y-2">
+                    <div id="q1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">1. Overall, the lesson was engaging and informative.</label>
+                        <div id="star-container-1" class="flex justify-center" data-question="1">
+                            <span class="star-rating" data-value="1">★</span>
+                            <span class="star-rating" data-value="2">★</span>
+                            <span class="star-rating" data-value="3">★</span>
+                            <span class="star-rating" data-value="4">★</span>
+                            <span class="star-rating" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="q1_rating" id="q1-rating-input">
+                    </div>
+                    <div id="q2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">2. The instructions for the activities were clear and easy to follow.</label>
+                        <div id="star-container-2" class="flex justify-center" data-question="2">
+                            <span class="star-rating" data-value="1">★</span>
+                            <span class="star-rating" data-value="2">★</span>
+                            <span class="star-rating" data-value="3">★</span>
+                            <span class="star-rating" data-value="4">★</span>
+                            <span class="star-rating" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="q2_rating" id="q2-rating-input">
+                    </div>
+                    <div id="q3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">3. The topic of the lesson was relevant and interesting to me.</label>
+                        <div id="star-container-3" class="flex justify-center" data-question="3">
+                            <span class="star-rating" data-value="1">★</span>
+                            <span class="star-rating" data-value="2">★</span>
+                            <span class="star-rating" data-value="3">★</span>
+                            <span class="star-rating" data-value="4">★</span>
+                            <span class="star-rating" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="q3_rating" id="q3-rating-input">
+                    </div>
+                    <div id="q4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">4. I enjoyed working in my group, and everyone contributed equally.</label>
+                        <div id="star-container-4" class="flex justify-center" data-question="4">
+                            <span class="star-rating" data-value="1">★</span>
+                            <span class="star-rating" data-value="2">★</span>
+                            <span class="star-rating" data-value="3">★</span>
+                            <span class="star-rating" data-value="4">★</span>
+                            <span class="star-rating" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="q4_rating" id="q4-rating-input">
+                    </div>
+                    <div id="q5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">5. The digital tools (apps and softboard) helped me understand the topic better.</label>
+                        <div id="star-container-5" class="flex justify-center" data-question="5">
+                            <span class="star-rating" data-value="1">★</span>
+                            <span class="star-rating" data-value="2">★</span>
+                            <span class="star-rating" data-value="3">★</span>
+                            <span class="star-rating" data-value="4">★</span>
+                            <span class="star-rating" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="q5_rating" id="q5-rating-input">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="comments" class="block text-sm font-medium text-gray-700">Additional Comments</label>
+                    <textarea id="comments" name="comments" rows="3" placeholder="How can we make the next lesson better?" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"></textarea>
+                </div>
+
+                <button type="submit" class="w-full px-4 py-2 bg-[#a5712e] text-white font-semibold rounded-lg shadow-md hover:bg-[#c0944b] focus:outline-none focus:ring-2 focus:ring-[#a5712e] focus:ring-offset-2 transition-colors">
+                    Submit Feedback
+                </button>
+            </form>
+            
+            <div id="thank-you-message" class="text-center hidden p-4 text-gray-800">
+                <p class="text-base font-bold mb-1">Thank you, <span id="student-name-display"></span>!</p>
+                <p class="text-sm">Your feedback has been submitted.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="text-center text-gray-500 text-sm mt-4">
+        <p>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨</p>
+    </footer>
+
+    <script>
+        // Subtitles for Shylock's video
+        const shylockVideo = document.getElementById('shylock-video');
+        const originalTextElement = document.querySelector('#shylock-subtitles .original-text');
+        const translationTextElement = document.querySelector('#shylock-subtitles .translation-text');
+        const shylockSubtitles = [
+            { start: 3, end: 6, original: "[Shylock] Hath not a Jew eyes?", translation: "[Shylock] Doesn't a Jew have eyes?" },
+            { start: 7, end: 22, original: "[Shylock] Hath not a Jew hands? Organs, dimensions, senses, affections, passions?", translation: "[Shylock] Doesn't a Jew have hands? Organs, measurements, senses, feelings, and passions?" },
+            { start: 23, end: 46, original: "[Shylock] Fed with the same food, hurt with the same weapons, subject to the same diseases, healed by the same means, warmed and cooled by the same winter and summer as a Christian is?", translation: "[Shylock] Isn't a Jew fed with the same food, hurt by the same weapons, subject to the same illnesses, healed by the same medicines, and kept warm and cool by the same winter and summer as a Christian is?" },
+            { start: 47, end: 53, original: "[Shylock] If you prick us, do we not bleed?", translation: "[Shylock] If you prick us, don't we bleed?" },
+            { start: 54, end: 61, original: "[Shylock] If you tickle us, do we not laugh?", translation: "[Shylock] If you tickle us, don't we laugh?" },
+            { start: 62, end: 68, original: "[Shylock] If you poison us, do we not die?", translation: "[Shylock] If you poison us, don't we die?" },
+            { start: 69, end: 78, original: "[Shylock] And if you wrong us, shall we not revenge?", translation: "[Shylock] And if you do us wrong, shall we not get revenge?" },
+            { start: 79, end: 87, original: "[Shylock] If we are like you in the rest we shall resemble you in that.", translation: "[Shylock] If we are like you in everything else, we will be like you in that too." },
+            { start: 88, end: 95, original: "[Shylock] If a Jew wrong a Christian, what's his humility? Revenge.", translation: "[Shylock] If a Jew wrongs a Christian, what is his forgiveness? Revenge." },
+            { start: 96, end: 104, original: "[Shylock] If a Christian wrong a Jew, what should his sufferance be by Christian example?", translation: "[Shylock] If a Christian wrongs a Jew, what should his tolerance be, following the Christian example?" },
+            { start: 105, end: 108, original: "[Shylock] Why, revenge.", translation: "[Shylock] Of course, revenge." },
+            { start: 109, end: 119, original: "[Shylock] The villainy you teach me I will execute and it shall go hard but I will better the instruction.", translation: "[Shylock] The evil that you teach me, I will carry out, and it will be a hard task, but I will improve upon the lesson." }
+        ];
+        let lastShylockSubtitle = null;
+        shylockVideo.addEventListener('timeupdate', () => {
+            const currentTime = shylockVideo.currentTime;
+            let currentSubtitle = shylockSubtitles.find(sub => currentTime >= sub.start && currentTime <= sub.end);
+            if (currentSubtitle !== lastShylockSubtitle) {
+                originalTextElement.innerHTML = currentSubtitle ? currentSubtitle.original : "";
+                translationTextElement.innerHTML = currentSubtitle ? currentSubtitle.translation : "";
+                lastShylockSubtitle = currentSubtitle;
+            }
+        });
+
+        // Subtitles for Bias Video
+        const biasVideo = document.getElementById('bias-video');
+        const biasTextElement = document.querySelector('#bias-subtitles .bias-text');
+        const biasSubtitles = [
+            { start: 4, end: 16, text: "We all have implicit bias. These unconscious biases that we carry are influenced by our life experiences and the messages we are given, either intentionally or unintentionally about ourselves and others." },
+            { start: 17, end: 21, text: "These messages are unconscious because they are not at the forefront of our thoughts." },
+            { start: 22, end: 36, text: "They're stored in the amygdala, a small portion of the brain with the primary purpose of protecting us from danger. If I'm walking to my car at night and I see someone approaching, my amygdala is going to react quickly to try to assess how safe I am." },
+            { start: 37, end: 54, text: "Our brain places people into categories based on outward appearances and those stereotypes allow our amygdala to quickly size up our situation. We're using stored information from life experiences, but those stereotypes are not always accurate." },
+            { start: 55, end: 104, text: "This is not limited to dangerous situations. At work, we might react to people differently without even thinking about how our stereotypes might be influencing our actions. To overcome these biases and limit their impact, we should try to pay attention to the judgements and perceptions we have about people. We can add new information to our brain's memory by interacting with different groups of people, be open to sharing, and be patient with ourself and others." },
+            { start: 105, end: 129, text: "We all have implicit biases, that's just the way our brain works. By making an effort to notice when our biases influence our unconscious judgments of others, we can strive to minimize the impact our biases have on our beliefs and actions." }
+        ];
+        let lastBiasSubtitle = null;
+        biasVideo.addEventListener('timeupdate', () => {
+            const currentTime = biasVideo.currentTime;
+            let currentSubtitle = biasSubtitles.find(sub => currentTime >= sub.start && currentTime <= sub.end);
+            if (currentSubtitle !== lastBiasSubtitle) {
+                biasTextElement.innerHTML = currentSubtitle ? currentSubtitle.text : "";
+                lastBiasSubtitle = currentSubtitle;
+            }
+        });
+
+        // Activity 1: Tone & Feeling Match
+        const feelingsList = document.getElementById('feelings-list');
+        const draggables = document.querySelectorAll('.draggable-concept');
+        const dropZonesTone = document.querySelectorAll('#tone-activity .drop-zone');
+        const correctAnswersTone = {
+            "Hath not a Jew eyes? Hath not a Jew hands, organs, dimensions, senses, affections, passions?": "sorrow",
+            "Fed with the same food, hurt with the same weapons, subject to the same diseases...": "logic",
+            "If you poison us, do we not die? And if you wrong us, shall we not revenge?": "anger",
+            "If we are like you in the rest, we shall resemble you in that. The villainy you teach me, I will execute.": "defiance"
+        };
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', draggable.id);
+                draggable.classList.add('dragging');
+            });
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+            });
+        });
+        dropZonesTone.forEach(dropZone => {
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if (!dropZone.querySelector('.draggable-concept')) dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const draggedId = e.dataTransfer.getData('text/plain');
+                const draggedElement = document.getElementById(draggedId);
+                const existingConcept = dropZone.querySelector('.draggable-concept');
+                if (existingConcept) feelingsList.appendChild(existingConcept);
+                const lineText = dropZone.previousElementSibling.previousElementSibling.textContent.trim().replace(/^"|"$/g, '');
+                const feedbackSpan = dropZone.nextElementSibling;
+                if (correctAnswersTone[lineText] === draggedId) {
+                    feedbackSpan.textContent = "Correct!";
+                    feedbackSpan.className = 'feedback text-sm mt-1 font-semibold text-green-600';
+                } else {
+                    feedbackSpan.textContent = "Try again.";
+                    feedbackSpan.className = 'feedback text-sm mt-1 font-semibold text-red-600';
+                }
+                dropZone.innerHTML = '';
+                dropZone.appendChild(draggedElement);
+                dropZone.classList.remove('empty');
+            });
+        });
+        document.getElementById('reset-tone').addEventListener('click', () => {
+            dropZonesTone.forEach(dropZone => {
+                const droppedConcept = dropZone.querySelector('.draggable-concept');
+                if (droppedConcept) feelingsList.appendChild(droppedConcept);
+                dropZone.innerHTML = '<span class="text-sm text-gray-400">Drag a feeling here</span>';
+                dropZone.classList.remove('correct', 'incorrect', 'dragover');
+                dropZone.classList.add('empty');
+                dropZone.nextElementSibling.textContent = '';
+                dropZone.nextElementSibling.classList.remove('text-green-600', 'text-red-600');
+            });
+        });
+
+        // Activity 2: Prejudice Ticker
+        const prejudiceCheckButton = document.getElementById('check-prejudice');
+        const prejudiceResetButton = document.getElementById('reset-prejudice');
+        const prejudiceResultBox = document.getElementById('prejudice-results');
+        prejudiceCheckButton.addEventListener('click', () => {
+            let correctCount = 0;
+            let totalCorrect = 0;
+            document.querySelectorAll('#prejudice-lines-list input[type="checkbox"]').forEach(checkbox => {
+                const isCorrect = checkbox.dataset.correct === 'true';
+                if (isCorrect) totalCorrect++;
+                if (checkbox.checked === isCorrect) {
+                    correctCount++;
+                    checkbox.parentElement.classList.add('bg-green-100', 'border-green-400');
+                    checkbox.parentElement.classList.remove('bg-gray-50', 'border-gray-200', 'bg-red-100', 'border-red-400');
+                } else if (checkbox.checked && !isCorrect) {
+                     checkbox.parentElement.classList.add('bg-red-100', 'border-red-400');
+                     checkbox.parentElement.classList.remove('bg-gray-50', 'border-gray-200', 'bg-green-100', 'border-green-400');
+                } else {
+                     checkbox.parentElement.classList.remove('bg-green-100', 'border-green-400', 'bg-red-100', 'border-red-400');
+                     checkbox.parentElement.classList.add('bg-gray-50', 'border-gray-200');
+                }
+            });
+            prejudiceResultBox.textContent = `You got ${correctCount} out of ${totalCorrect} correct!`;
+            prejudiceResultBox.classList.remove('hidden');
+        });
+        prejudiceResetButton.addEventListener('click', () => {
+            document.querySelectorAll('#prejudice-lines-list input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.parentElement.classList.remove('bg-green-100', 'border-green-400', 'bg-red-100', 'border-red-400');
+                checkbox.parentElement.classList.add('bg-gray-50', 'border-gray-200');
+            });
+            prejudiceResultBox.classList.add('hidden');
+            prejudiceResultBox.textContent = '';
+        });
+
+        // Activity 3: Bias Concept Chart
+        const termsListBias = document.querySelector('#bias-concept-activity #terms-list');
+        const draggableTermsBias = document.querySelectorAll('#bias-concept-activity .draggable-term');
+        const dropZonesBias = document.querySelectorAll('#bias-concept-activity .drop-zone');
+        const correctAnswersBias = {
+            'A small part of the brain whose purpose is to protect us from danger and reacts quickly to assess how safe we are.': 'amygdala',
+            'Biases that are not at the forefront of our thoughts.': 'unconscious',
+            'Categories our brain places people in based on outward appearances, which are not always accurate.': 'stereotypes',
+            'Unconscious biases that are influenced by the messages we are given and the things we experience.': 'implicit-bias',
+            'One of the main influences on our unconscious biases.': 'life-experiences',
+            'The things we should try to pay attention to in order to overcome our biases.': 'judgements-and-perceptions'
+        };
+        draggableTermsBias.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', draggable.id);
+                draggable.classList.add('dragging');
+            });
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+            });
+        });
+        dropZonesBias.forEach(dropZone => {
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if (!dropZone.querySelector('.draggable-term')) dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const draggedId = e.dataTransfer.getData('text/plain');
+                const draggedElement = document.getElementById(draggedId);
+                const existingTerm = dropZone.querySelector('.draggable-term');
+                if (existingTerm) termsListBias.appendChild(existingTerm);
+                dropZone.innerHTML = '';
+                dropZone.appendChild(draggedElement);
+                const correctId = dropZone.dataset.correctId;
+                if (draggedElement.id === correctId) {
+                    dropZone.classList.add('correct');
+                    dropZone.classList.remove('incorrect');
+                } else {
+                    dropZone.classList.add('incorrect');
+                    dropZone.classList.remove('correct');
+                }
+            });
+        });
+        document.getElementById('reset-activity-bias').addEventListener('click', () => {
+            dropZonesBias.forEach(dropZone => {
+                const droppedTerm = dropZone.querySelector('.draggable-term');
+                if (droppedTerm) termsListBias.appendChild(droppedTerm);
+                dropZone.innerHTML = '<span class="text-sm text-gray-400">Drop term here</span>';
+                dropZone.classList.remove('correct', 'incorrect', 'dragover');
+            });
+        });
+
+        // Activity 4: Collective Worksheet
+        const hintButtons = document.querySelectorAll('.hint-button');
+        const shylockButton = document.getElementById('show-shylock-transcript');
+        const biasButton = document.getElementById('show-bias-transcript');
+        const shylockTranscript = document.getElementById('shylock-transcript');
+        const biasTranscript = document.getElementById('bias-transcript');
+        hintButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const hintText = button.nextElementSibling;
+                hintText.classList.toggle('open');
+                button.textContent = hintText.classList.contains('open') ? 'Hide Hint' : 'Show Hint';
+            });
+        });
+        shylockButton.addEventListener('click', () => {
+            shylockTranscript.classList.toggle('active');
+            biasTranscript.classList.remove('active');
+            shylockButton.textContent = shylockTranscript.classList.contains('active') ? "Hide Shylock's Transcript" : "Show Shylock's Transcript";
+            biasButton.textContent = "Show Implicit Bias Transcript";
+        });
+        biasButton.addEventListener('click', () => {
+            biasTranscript.classList.toggle('active');
+            shylockTranscript.classList.remove('active');
+            biasButton.textContent = biasTranscript.classList.contains('active') ? "Hide Implicit Bias Transcript" : "Show Implicit Bias Transcript";
+            shylockButton.textContent = "Show Shylock's Transcript";
+        });
+
+        // Feedback Form Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const feedbackForm = document.getElementById('feedback-form');
+            const thankYouMessage = document.getElementById('thank-you-message');
+            const studentNameDisplay = document.getElementById('student-name-display');
+            
+            feedbackForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                const studentNameInput = document.getElementById('student-name');
+                const studentName = studentNameInput.value.trim();
+                
+                if (!studentName) {
+                    alert('Please enter your name.');
+                    return;
+                }
+
+                const ratings = {};
+                document.querySelectorAll('[id^="star-container-"]').forEach(container => {
+                    const questionNumber = container.dataset.question;
+                    const filledStars = container.querySelectorAll('.star-rating.filled').length;
+                    ratings[questionNumber] = filledStars;
+                });
+                
+                const allQuestionsRated = Object.values(ratings).every(rating => rating > 0);
+                if (!allQuestionsRated) {
+                    alert('Please answer all the rating questions before submitting.');
+                    return;
+                }
+
+                document.getElementById('q1-rating-input').value = ratings['1'];
+                document.getElementById('q2-rating-input').value = ratings['2'];
+                document.getElementById('q3-rating-input').value = ratings['3'];
+                document.getElementById('q4-rating-input').value = ratings['4'];
+                document.getElementById('q5-rating-input').value = ratings['5'];
+
+                const form = event.target;
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: form.method,
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        studentNameDisplay.textContent = studentName;
+                        feedbackForm.classList.add('hidden');
+                        thankYouMessage.classList.remove('hidden');
+                        form.reset();
+                    } else {
+                        alert('Something went wrong. Please try again.');
+                    }
+                } catch (error) {
+                    alert('Network error. Please check your connection and try again.');
+                }
+            });
+
+            document.querySelectorAll('[id^="star-container-"]').forEach(container => {
+                const stars = container.querySelectorAll('.star-rating');
+                stars.forEach(star => {
+                    star.addEventListener('click', (e) => {
+                        const value = parseInt(e.target.dataset.value);
+                        stars.forEach(s => {
+                            if (parseInt(s.dataset.value) <= value) {
+                                s.classList.add('filled');
+                            } else {
+                                s.classList.remove('filled');
+                            }
+                        });
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
