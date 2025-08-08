@@ -16,6 +16,7 @@
             color: #333;
             margin: 0;
             padding: 0;
+            position: relative; /* For the modal to be positioned correctly */
         }
         .main-container {
             max-width: 1000px;
@@ -29,8 +30,17 @@
         /* Top Header */
         .top-header {
             font-family: 'Inter', sans-serif;
-            font-size: 1 rem;
+            font-size: 0.8rem;
             color: #444;
+            padding: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Centered Credit Line */
+        .credit-line-container {
+            text-align: center;
             padding: 0.5rem;
         }
         
@@ -168,7 +178,7 @@
         .hint-text.open {
             display: block;
             max-height: 200px;
-            padding: 0.9rem;
+            padding: 1rem;
             margin-top: 0.5rem;
         }
         .transcript-content {
@@ -208,11 +218,98 @@
             background-color: #c0944b;
         }
         
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fdfaf6;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            /* Centering fix */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-height: 90vh; /* Prevents overflow on smaller screens */
+            overflow-y: auto; /* Adds scrollbar if content exceeds max-height */
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .lesson-plan-content h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .lesson-plan-content p, .lesson-plan-content li {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+        .lesson-plan-content ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+        }
     </style>
 </head>
 <body>
     <div class="top-header">
-     <p class="font-bold italic text-center text-[#c0944b]">The following lesson has been created by Panagiotis Domvros, English and Drama Teacher © 2025 </p>
+        <div class="credit-line-container">
+            <p class="font-bold italic text-center text-[#c0944b]">The following lesson has been created by Panagiotis Domvros, English and Drama Teacher, © 2025</p>
+        </div>
+        <button id="show-lesson-plan" class="bg-[#a5712e] text-white font-bold py-1 px-3 rounded-md shadow-lg hover:bg-[#c0944b] transition-colors duration-200 text-xs">
+            Teacher Login
+        </button>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="password-modal-close">&times;</span>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Teacher Login</h3>
+            <p class="mb-2">Enter the password to view the lesson plan.</p>
+            <input type="password" id="password-input" class="w-full px-3 py-2 border rounded-md shadow-sm mb-4">
+            <button id="password-submit" class="w-full bg-[#a5712e] text-white font-bold py-2 px-4 rounded-md shadow-lg hover:bg-[#c0944b] transition-colors duration-200">
+                Submit
+            </button>
+        </div>
+    </div>
+    
+    <!-- Lesson Plan Modal -->
+    <div id="lesson-plan-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="lesson-plan-modal-close">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">40-Minute Lesson Plan</h3>
+            <div id="lesson-plan-text" class="lesson-plan-content"></div>
+        </div>
     </div>
 
     <div class="main-container">
@@ -239,7 +336,7 @@
         
         <div id="shylock-activities-container" class="activity-container">
             <header class="text-center space-y-1">
-                <h2 class="font-bold text-gray-900 text-2xl">Shylock's Speech: An Interactive Analysis</h2>
+                <h2 class="font-bold text-gray-900 text-2xl">Shylock's Speech</h2>
                 <p class="text-base text-gray-600">Work in your groups to complete these two activities after watching the video. Drag the feelings to the correct lines, then tick the lines that show prejudice.</p>
             </header>
 
@@ -328,7 +425,7 @@
 
         <!-- Part 2: Modern Connection -->
         <div class="title-container mt-4">
-            <h2 class="font-bold text-2xl text-gray-900">The Modern Connection</h2>
+            <h2 class="text-2xl font-bold text-gray-900">The Modern Connection</h2>
             <p class="subtitle font-normal">
                 Tiffany Taylor Smith is the executive director for inclusive excellence education and professional development at the University of Dayton. This video is part of the University of Dayton Anti-Racist Lecture Series. More at <a href="https://www.udayton.edu/about/diversity/" target="_blank" class="text-indigo-600 underline">https://www.udayton.edu/about/diversity/</a>
             </p>
@@ -352,7 +449,7 @@
             </header>
             <div class="bg-gray-100 p-2 rounded-lg shadow-xl mt-2">
                 <h4 class="text-base font-semibold mb-1 text-gray-800">Key Concepts</h4>
-                <div id="terms-list" class="flex flex-wrap gap-1 justify-center">
+                <div id="terms-list-bias-concept" class="flex flex-wrap gap-1 justify-center">
                     <div id="implicit-bias" class="draggable-term p-2 bg-yellow-400 text-black font-bold rounded-md shadow-md" draggable="true">Implicit Bias</div>
                     <div id="amygdala" class="draggable-term p-2 bg-orange-400 text-white font-bold rounded-md shadow-md" draggable="true">Amygdala</div>
                     <div id="stereotypes" class="draggable-term p-2 bg-purple-400 text-white font-bold rounded-md shadow-md" draggable="true">Stereotypes</div>
@@ -509,7 +606,6 @@
                     <h4 class="font-semibold text-sm">2. Identify the parallel structures and explain how they make his argument more powerful.</h4>
                     <button class="hint-button text-xs mt-1 hover:underline">Show Hint</button>
                     <p class="hint-text text-xs mt-1">Hint: Look for repeated phrases or sentence patterns. How does this repetition build a sense of rhythm and emotional intensity?</p>
-                </p>
                 </div>
             </div>
         </div>
@@ -606,6 +702,85 @@
     </footer>
 
     <script>
+        // Lesson Plan Password Logic
+        const passwordModal = document.getElementById('password-modal');
+        const lessonPlanModal = document.getElementById('lesson-plan-modal');
+        const showLessonPlanButton = document.getElementById('show-lesson-plan');
+        const passwordInput = document.getElementById('password-input');
+        const passwordSubmitButton = document.getElementById('password-submit');
+        const passwordModalClose = document.getElementById('password-modal-close');
+        const lessonPlanModalClose = document.getElementById('lesson-plan-modal-close');
+        const lessonPlanText = document.getElementById('lesson-plan-text');
+
+        const lessonPlanContent = `
+<h4>40-Minute Lesson Plan: "Hath Not a Jew Eyes?" - Exploring Racism Through Shakespeare</h4>
+<p><strong>Target Audience:</strong> B2+ level Greek students, 25 students (5 groups of 5)</p>
+<p><strong>Duration:</strong> 40 minutes</p>
+<p><strong>Materials:</strong> Video clip of Shylock's speech (with subtitles), the "Implicit Bias" video, two digital interactive activities, whiteboard/projector.</p>
+<p><strong>Learning Objectives:</strong></p>
+<ul>
+    <li><em>Receptive Skills:</em> Students will comprehend the central argument and key emotional shifts in Shylock's speech and the modern video.</li>
+    <li><em>Critical Thinking:</em> Students will analyze Shylock's argument and connect it to the timeless issue of racism and the psychological phenomenon of implicit bias.</li>
+    <li><em>Communicative Language:</em> Students will practice identifying and using rhetorical questions and parallel structures to express their own opinions and arguments.</li>
+</ul>
+
+<h4>Part 1: The Hook & Initial Analysis (10 minutes)</h4>
+<p><em>(Focus: Code Breaker & Meaning Maker)</em></p>
+<p><strong>1:00-4:00:</strong> Show the video clip of Shylock's famous "Hath not a Jew eyes?" speech. The subtitles will provide both the original and modern English translations, acting as a Code Breaker tool.</p>
+<p><strong>4:00-10:00:</strong> Each group will work through two interactive activities to analyze the speech.</p>
+<ul>
+    <li>Activity 1 - Tone & Feeling: Students will drag-and-drop feelings (e.g., anger, sorrow) to match specific lines from the speech.</li>
+    <li>Activity 2 - Prejudice Lines: Students will tick the lines from the speech that show or respond to prejudice.</li>
+</ul>
+<p><strong>Teacher Task:</strong> Circulate among the groups to facilitate discussion and check for understanding.</p>
+
+<h4>Part 2: Meaning Maker & Modern Connection (10 minutes)</h4>
+<p><em>(Focus: Meaning Maker & Text Analyst)</em></p>
+<p><strong>10:00-15:00:</strong> <em>Group Task (Meaning Maker):</em> Each group must write a short, one-sentence summary of Shylock's central argument.</p>
+<p><strong>15:00-20:00:</strong> Show the video "Implicit Bias: We All Have It." Afterwards, the groups will use the "Connecting Shylock to Implicit Bias" interactive chart to link the video's concepts (e.g., amygdala, stereotypes) to specific lines from Shylock's speech. This is where they begin their <em>Text Analyst</em> work.</p>
+<p><strong>Teacher Task:</strong> Go around to the groups, ensuring their summaries and connections are sound.</p>
+
+<h4>Part 3: Text User & Text Analyst - Group Work (15 minutes)</h4>
+<p><em>(Focus: Text User & Text Analyst)</em></p>
+<p><strong>20:00-35:00:</strong> Each of the five groups will be assigned a different focus and will use the collective worksheet. They will discuss their assigned topic and prepare to share their answers with the class.</p>
+<p><strong>Group 1 & 2: <em>Text User</em> - The Purpose of the Speeches</strong></p>
+<p><strong>Task:</strong> Discuss why Shylock is giving his speech and why the speaker in the modern video is giving their talk. What is the purpose of each message? What are they trying to persuade the audience to do or think?</p>
+<p><strong>Group 3 & 4: <em>Text Analyst</em> - Timeless Racism</strong></p>
+<p><strong>Task:</strong> Compare the racism in Shylock's time to what is discussed in the modern video. How are people judged by their race, religion, or nationality today? How does the concept of implicit bias from the video help us understand the prejudice Shylock faced?</p>
+<p><strong>Group 5: <em>Language Focus</em> - Function on Structure</strong></p>
+<p><strong>Task:</strong> Examine the rhetorical questions and parallel structures in Shylock's speech, and explain their effect.</p>
+
+<h4>Part 4: Group Sharing & Wrap-Up (5 minutes)</h4>
+<p><em>(Focus: Text Analyst)</em></p>
+<p><strong>35:00-38:00:</strong> <em>Group Presentations:</em> Each group quickly presents their findings from Part 3. The teacher can guide the discussion and ask follow-up questions.</p>
+<p><strong>38:00-40:00:</strong> <em>Final Discussion:</em> Open the floor for a final discussion about how understanding implicit bias might change their own perceptions. Conclude by summarizing the key points: that prejudice is a timeless human issue that can be understood and addressed using modern psychological frameworks. As a final task, students will fill out the interactive feedback form.</p>
+        `;
+
+        showLessonPlanButton.addEventListener('click', () => {
+            passwordModal.style.display = 'flex';
+        });
+
+        passwordModalClose.addEventListener('click', () => {
+            passwordModal.style.display = 'none';
+            passwordInput.value = '';
+        });
+        lessonPlanModalClose.addEventListener('click', () => {
+            lessonPlanModal.style.display = 'none';
+        });
+
+        passwordSubmitButton.addEventListener('click', () => {
+            // A simple, hardcoded password for demonstration.
+            // In a real application, you would use a more secure method.
+            if (passwordInput.value === 'teacher') { 
+                passwordModal.style.display = 'none';
+                lessonPlanText.innerHTML = lessonPlanContent.trim();
+                lessonPlanModal.style.display = 'flex';
+            } else {
+                alert('Incorrect password.');
+                passwordInput.value = '';
+            }
+        });
+
         // Subtitles for Shylock's video
         const shylockVideo = document.getElementById('shylock-video');
         const originalTextElement = document.querySelector('#shylock-subtitles .original-text');
@@ -687,7 +862,7 @@
                 const draggedId = e.dataTransfer.getData('text/plain');
                 const draggedElement = document.getElementById(draggedId);
                 const existingConcept = dropZone.querySelector('.draggable-concept');
-                if (existingConcept) feelingsList.appendChild(existingConcept);
+                if (existsSync) feelingsList.appendChild(existsSync);
                 const lineText = dropZone.previousElementSibling.previousElementSibling.textContent.trim().replace(/^"|"$/g, '');
                 const feedbackSpan = dropZone.nextElementSibling;
                 if (correctAnswersTone[lineText] === draggedId) {
