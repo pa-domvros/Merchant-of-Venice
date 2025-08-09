@@ -862,7 +862,7 @@
                 const draggedId = e.dataTransfer.getData('text/plain');
                 const draggedElement = document.getElementById(draggedId);
                 const existingConcept = dropZone.querySelector('.draggable-concept');
-                if (existsSync) feelingsList.appendChild(existsSync);
+                if (existingConcept) feelingsList.appendChild(existingConcept);
                 const lineText = dropZone.previousElementSibling.previousElementSibling.textContent.trim().replace(/^"|"$/g, '');
                 const feedbackSpan = dropZone.nextElementSibling;
                 if (correctAnswersTone[lineText] === draggedId) {
@@ -925,7 +925,7 @@
         });
 
         // Activity 3: Bias Concept Chart
-        const termsListBias = document.querySelector('#bias-concept-activity #terms-list');
+        const termsListBias = document.querySelector('#terms-list-bias-concept');
         const draggableTermsBias = document.querySelectorAll('#bias-concept-activity .draggable-term');
         const dropZonesBias = document.querySelectorAll('#bias-concept-activity .drop-zone');
         const correctAnswersBias = {
